@@ -22,6 +22,10 @@ const cartSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        subTotal: {
+          type: Number,
+          required: true,
+        },
       },
     ],
   },

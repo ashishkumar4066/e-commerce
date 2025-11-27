@@ -52,6 +52,7 @@ router.post('/add', async (req, res) => {
             productId,
             quantity,
             price: product.price,
+            subTotal: quantity * product.price,
           },
         ],
       });
