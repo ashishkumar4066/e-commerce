@@ -12,9 +12,11 @@ app.use(express.json());
 
 const productRoutes = require('./src/routes/products');
 const cartRoutes = require('./src/routes/carts');
+const orderRoutes = require('./src/routes/orders');
 
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/checkout', orderRoutes);
 
 // Health check
 app.get('/', (req, res) => {
