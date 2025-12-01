@@ -5,6 +5,7 @@ const { log } = require('console');
 const router = express.Router();
 
 const nthOrder = 5; //5,10,15...
+
 router.post('/checkIsCouponValid', async (req, res) => {
   try {
     const lastOrder = await Order.findOne().sort({ orderNumber: -1 });
@@ -16,7 +17,7 @@ router.post('/checkIsCouponValid', async (req, res) => {
       });
     } else {
       return res.status(200).json({
-        success: true,
+        success: false,
         message: 'Coupon is not valid',
       });
     }
@@ -47,7 +48,12 @@ router.post('/placeOrder', async (req, res) => {
       const discountCodeSchema = await DiscountCode.findOne({
         code: discountCode,
       });
-
+      if (discountCodeSchema) {
+        return res.status(400).json({
+          success: false,
+          error: 'Coupon code is invalid',
+        });
+      }
       if (discountCodeSchema.isUsed) {
         return res.status(400).json({
           success: false,
