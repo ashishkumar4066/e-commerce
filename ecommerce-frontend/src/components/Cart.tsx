@@ -7,7 +7,7 @@ import {
   Divider,
   TextField,
 } from '@mui/material';
-import { X, Plus, Minus, Trash2, ShoppingBag, Tag } from 'lucide-react';
+import { X, Plus, Minus, Trash2, ShoppingBag, Tag, CheckCircle } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,12 +20,13 @@ interface CartProps {
 }
 
 const Cart = ({ open, onClose }: CartProps) => {
-  const { cart, updateQuantity, removeFromCart, getCartTotal } = useCart();
+  const { cart, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
   const { user } = useAuth();
   const [discountCode, setDiscountCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [discountMessage, setDiscountMessage] = useState('');
   const [isCouponValid, setIsCouponValid] = useState<boolean | null>(null);
+  const [orderSuccess, setOrderSuccess] = useState(false);
   const subtotal = getCartTotal();
   const total = subtotal - appliedDiscount;
 
@@ -81,7 +82,24 @@ const Cart = ({ open, onClose }: CartProps) => {
     try {
       const response = await placeOrder(payload);
       console.log('Order Response:', response);
-      alert('Order placed successfully!');
+
+      if (response.success) {
+        // Clear cart and show success message
+        clearCart();
+        setOrderSuccess(true);
+        setDiscountCode('');
+        setAppliedDiscount(0);
+        setDiscountMessage('');
+        setIsCouponValid(null);
+
+        // Close drawer after 3 seconds
+        setTimeout(() => {
+          setOrderSuccess(false);
+          onClose();
+        }, 3000);
+      } else {
+        alert('Failed to place order. Please try again.');
+      }
     } catch (error) {
       console.error('Order failed:', error);
       alert('Failed to place order. Please try again.');
@@ -136,7 +154,45 @@ const Cart = ({ open, onClose }: CartProps) => {
 
         {/* Cart Items */}
         <Box sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
-          {cart.length === 0 ? (
+          {orderSuccess ? (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                gap: 3,
+              }}
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+              >
+                <CheckCircle size={120} color="hsl(120, 100%, 40%)" />
+              </motion.div>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 700,
+                  color: 'hsl(var(--foreground))',
+                  textAlign: 'center',
+                }}
+              >
+                Hurray! Order is successful
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'hsl(var(--muted-foreground))',
+                  textAlign: 'center',
+                }}
+              >
+                Your order has been placed successfully!
+              </Typography>
+            </Box>
+          ) : cart.length === 0 ? (
             <Box
               sx={{
                 display: 'flex',

@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Typography, Badge, IconButton, Box, Button } from '@mui/material';
-import { ShoppingCart, User, LogOut } from 'lucide-react';
+import { ShoppingCart, User, LogOut, Shield } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ interface NavbarProps {
 
 const Navbar = ({ onCartClick }: NavbarProps) => {
   const { getCartCount } = useCart();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -29,26 +29,52 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Typography
-            variant="h4"
-            component="div"
-            sx={{
-              fontWeight: 700,
-              color: 'hsl(var(--netflix-red))',
-              letterSpacing: '-0.5px',
-              cursor: 'pointer',
-              textShadow: '0 0 20px hsl(var(--netflix-red-glow) / 0.5)',
-            }}
-            onClick={() => navigate('/')}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            STREAMSHOP
-          </Typography>
-        </motion.div>
+            <Typography
+              variant="h4"
+              component="div"
+              sx={{
+                fontWeight: 700,
+                color: 'hsl(var(--netflix-red))',
+                letterSpacing: '-0.5px',
+                cursor: 'pointer',
+                textShadow: '0 0 20px hsl(var(--netflix-red-glow) / 0.5)',
+              }}
+              onClick={() => navigate('/')}
+            >
+              STREAMSHOP
+            </Typography>
+          </motion.div>
+
+          {/* Admin Link */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Button
+              onClick={() => navigate(isAdmin ? '/admin/dashboard' : '/admin/login')}
+              startIcon={<Shield size={18} />}
+              sx={{
+                color: 'hsl(var(--foreground))',
+                textTransform: 'none',
+                fontWeight: 600,
+                display: { xs: 'none', md: 'flex' },
+                '&:hover': {
+                  backgroundColor: 'hsl(0, 0%, 15%)',
+                  color: 'hsl(var(--netflix-red))',
+                },
+              }}
+            >
+              Admin
+            </Button>
+          </motion.div>
+        </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <motion.div
