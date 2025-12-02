@@ -88,3 +88,5 @@ router.post('/generate-discount', async (req, res) => {
     });
   }
 });
+
+module.exports = router;

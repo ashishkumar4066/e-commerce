@@ -13,10 +13,12 @@ app.use(express.json());
 const productRoutes = require('./src/routes/products');
 const cartRoutes = require('./src/routes/carts');
 const orderRoutes = require('./src/routes/orders');
+const adminRoutes = require('./src/routes/admin');
 
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', orderRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/', (req, res) => {
@@ -26,7 +28,7 @@ app.get('/', (req, res) => {
       products: '/api/products',
       cart: '/api/cart',
       checkout: '/api/checkout',
-      admin: '/api/admin/stats',
+      admin: '/api/admin',
     },
   });
 });
