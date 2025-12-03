@@ -1,6 +1,7 @@
 const express = require('express');
 const Order = require('../models/Order');
 const DiscountCode = require('../models/DiscountCode');
+const Product = require('../models/Product');
 const { log } = require('console');
 const router = express.Router();
 
@@ -28,6 +29,7 @@ router.post('/checkIsCouponValid', async (req, res) => {
     });
   }
 });
+
 router.post('/placeOrder', async (req, res) => {
   try {
     const { userId, items, totalItems, totalAmount, discountCode } = req.body;
@@ -37,6 +39,26 @@ router.post('/placeOrder', async (req, res) => {
         error: 'userId is required',
       });
     }
+
+    // Validate stock availability for all items before placing order
+    for (const item of items) {
+      const product = await Product.findOne({ productId: item.productId });
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          error: `Product with ID ${item.productId} not found`,
+        });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          error: `Cannot add ${item.quantity} of ${product.title}. Only ${product.stock} items available in stock`,
+        });
+      }
+    }
+
     const lastOrder = await Order.findOne().sort({ orderNumber: -1 });
     const currentOrderNumber = lastOrder ? lastOrder.orderNumber + 1 : 1;
 
@@ -48,7 +70,7 @@ router.post('/placeOrder', async (req, res) => {
       const discountCodeSchema = await DiscountCode.findOne({
         code: discountCode,
       });
-      if (discountCodeSchema) {
+      if (!discountCodeSchema) {
         return res.status(400).json({
           success: false,
           error: 'Coupon code is invalid',
@@ -83,6 +105,16 @@ router.post('/placeOrder', async (req, res) => {
     };
     const newOrder = new Order({ ...payload });
     await newOrder.save();
+
+    // Reduce stock for each item in the order
+    for (const item of items) {
+      await Product.findOneAndUpdate(
+        { productId: item.productId },
+        { $inc: { stock: -item.quantity } },
+        { new: true }
+      );
+    }
+
     // nth logic
     const nextOrderNumber = currentOrderNumber + 1;
     if (nextOrderNumber % nthOrder == 0) {

@@ -23,6 +23,7 @@ const productListDatabase = async () => {
       stock: Math.floor(Math.random() * 50) + 10,
       category: product.category,
       image: product.image,
+      rating: product.rating,
     }));
 
     await Product.insertMany(products);
