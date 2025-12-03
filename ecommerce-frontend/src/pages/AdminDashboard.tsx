@@ -24,6 +24,16 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import {
@@ -37,6 +47,7 @@ import {
   Warehouse,
 } from 'lucide-react';
 import { generateDiscount, fetchAllOrder, getProducts } from '@/service/api';
+import { toast } from '@/components/ui/sonner';
 type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
 
 interface Order {
@@ -104,6 +115,7 @@ const AdminDashboard = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [currentTab, setCurrentTab] = useState(0);
   const [productFilter, setProductFilter] = useState('');
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -213,14 +225,20 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
+    setShowLogoutDialog(true);
+  };
+
+  const confirmLogout = () => {
     logout();
     navigate('/');
+    setShowLogoutDialog(false);
   };
 
   const handleOrderSearch = async () => {
     if (!orderNumber.trim()) {
       setOrderSearchType('error');
       setOrderSearchResult('Please enter an order number');
+      toast.error('Please enter an order number');
       return;
     }
 
@@ -229,13 +247,36 @@ const AdminDashboard = () => {
     if (isNaN(orderNum) || orderNum <= 0 || !Number.isInteger(orderNum)) {
       setOrderSearchType('error');
       setOrderSearchResult('Order number must be a positive integer');
+      toast.error('Order number must be a positive integer');
       return;
     }
 
-    const generatedDiscount = await generateDiscount({
-      orderNumber: orderNum,
-    });
-    console.log('Generated Discount:', generatedDiscount);
+    try {
+      const generatedDiscount = await generateDiscount({
+        orderNumber: orderNum,
+      });
+      console.log('Generated Discount:', generatedDiscount);
+
+      if (generatedDiscount.success) {
+        setOrderSearchType('success');
+        setOrderSearchResult(generatedDiscount.message);
+        toast.success(generatedDiscount.message, {
+          description: `Discount Code: ${generatedDiscount.discountCode.code} (${generatedDiscount.discountCode.percentage}% off)`,
+        });
+        setOrderNumber('');
+      } else {
+        setOrderSearchType('error');
+        setOrderSearchResult(generatedDiscount.message);
+        toast.error(generatedDiscount.message);
+      }
+    } catch (error: any) {
+      setOrderSearchType('error');
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to generate discount code';
+      setOrderSearchResult(errorMessage);
+      toast.error('Error generating discount code', {
+        description: errorMessage,
+      });
+    }
   };
 
   if (!isAdmin) {
@@ -1019,6 +1060,24 @@ const AdminDashboard = () => {
             </Card>
           </motion.div>
         </Container>
+
+        {/* Logout Confirmation Dialog */}
+        <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to logout from the admin dashboard?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmLogout}>
+                Logout
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </Box>
     </ThemeProvider>
   );
