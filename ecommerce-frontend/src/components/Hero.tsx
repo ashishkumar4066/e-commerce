@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Button } from '@mui/material';
+import { Box, Container, Typography, Button, Tooltip } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -131,31 +131,33 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Button
-            onClick={scrollToProducts}
-            variant="contained"
-            size="large"
-            endIcon={<ArrowRight size={20} />}
-            sx={{
-              backgroundColor: 'hsl(var(--netflix-red))',
-              color: 'hsl(var(--foreground))',
-              px: 4,
-              py: 1.5,
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              borderRadius: '4px',
-              textTransform: 'none',
-              boxShadow: '0 0 30px hsl(var(--netflix-red-glow) / 0.5)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                backgroundColor: 'hsl(var(--netflix-red-hover))',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 0 40px hsl(var(--netflix-red-glow) / 0.7)',
-              },
-            }}
-          >
-            Shop Now
-          </Button>
+          <Tooltip title="Browse our product collection" arrow>
+            <Button
+              onClick={scrollToProducts}
+              variant="contained"
+              size="large"
+              endIcon={<ArrowRight size={20} />}
+              sx={{
+                backgroundColor: 'hsl(var(--netflix-red))',
+                color: 'hsl(var(--foreground))',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                borderRadius: '4px',
+                textTransform: 'none',
+                boxShadow: '0 0 30px hsl(var(--netflix-red-glow) / 0.5)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'hsl(var(--netflix-red-hover))',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 0 40px hsl(var(--netflix-red-glow) / 0.7)',
+                },
+              }}
+            >
+              Shop Now
+            </Button>
+          </Tooltip>
         </motion.div>
       </Container>
     </Box>

@@ -7,7 +7,15 @@ import {
   Divider,
   TextField,
 } from '@mui/material';
-import { X, Plus, Minus, Trash2, ShoppingBag, Tag, CheckCircle } from 'lucide-react';
+import {
+  X,
+  Plus,
+  Minus,
+  Trash2,
+  ShoppingBag,
+  Tag,
+  CheckCircle,
+} from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,7 +28,8 @@ interface CartProps {
 }
 
 const Cart = ({ open, onClose }: CartProps) => {
-  const { cart, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
+  const { cart, updateQuantity, removeFromCart, getCartTotal, clearCart } =
+    useCart();
   const { user } = useAuth();
   const [discountCode, setDiscountCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
@@ -38,9 +47,9 @@ const Cart = ({ open, onClose }: CartProps) => {
     }
     const payload = { discountCode: code };
     const isCouponValid = await checkCouponIsValid(payload);
-    setIsCouponValid(isCouponValid.suceess);
+    setIsCouponValid(isCouponValid.success);
     console.log('Coupon validity:', isCouponValid);
-    if (isCouponValid.suceess) {
+    if (isCouponValid.success) {
       const discountAmount = subtotal * 0.1;
       setAppliedDiscount(discountAmount);
       setDiscountMessage(`Discount code "${code}" applied!`);

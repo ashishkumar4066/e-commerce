@@ -5,6 +5,7 @@ import {
   Typography,
   Button,
   Box,
+  Tooltip,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
@@ -107,38 +108,76 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           )}
 
           <Box sx={{ mt: 'auto' }}>
-            <Typography
-              variant="h5"
+            <Box
               sx={{
-                fontWeight: 700,
-                color: 'hsl(var(--netflix-red))',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 mb: 2,
               }}
             >
-              ₹ {product.price.toFixed(2)}
-            </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 700,
+                  color: 'hsl(var(--netflix-red))',
+                }}
+              >
+                ₹ {product.price.toFixed(2)}
+              </Typography>
 
-            <Button
-              fullWidth
-              variant="contained"
-              startIcon={<ShoppingCart size={18} />}
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddToCart(product);
-              }}
-              sx={{
-                backgroundColor: 'hsl(var(--netflix-red))',
-                color: 'hsl(var(--foreground))',
-                fontWeight: 600,
-                textTransform: 'none',
-                py: 1,
-                '&:hover': {
-                  backgroundColor: 'hsl(var(--netflix-red-hover))',
-                },
-              }}
-            >
-              Add to Cart
-            </Button>
+              {product.rating && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: 'hsl(45, 100%, 50%)',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    ⭐ {product.rating.rate.toFixed(1)}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: 'hsl(var(--muted-foreground))',
+                      fontSize: '0.75rem',
+                    }}
+                  >
+                    ({product.rating.count})
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+
+            <Tooltip title={`Add ${product.name} to your cart`} arrow>
+              <Button
+                fullWidth
+                variant="contained"
+                startIcon={<ShoppingCart size={18} />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAddToCart(product);
+                }}
+                sx={{
+                  backgroundColor: 'hsl(var(--netflix-red))',
+                  color: 'hsl(var(--foreground))',
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  py: 1,
+                  '&:hover': {
+                    backgroundColor: 'hsl(var(--netflix-red-hover))',
+                  },
+                }}
+              >
+                Add to Cart
+              </Button>
+            </Tooltip>
           </Box>
         </CardContent>
       </Card>
