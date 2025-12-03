@@ -49,13 +49,6 @@ router.post('/generate-discount', async (req, res) => {
       }
     }
 
-    const order = await Order.findOne({ orderNumber });
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: `Order #${orderNumber} not found in system. Cannot generate discount for non-existent order.`,
-      });
-    }
     const newCode = `DISCOUNT${orderNumber}`;
 
     const newDiscountCode = new DiscountCode({

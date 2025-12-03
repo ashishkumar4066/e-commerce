@@ -82,6 +82,15 @@ router.post('/placeOrder', async (req, res) => {
           error: 'Discount code has already been used',
         });
       }
+
+      // Check if discount code can be applied for current order number
+      if (discountCodeSchema.generatedForOrder !== currentOrderNumber) {
+        return res.status(400).json({
+          success: false,
+          error: `This discount code can only be applied for order #${discountCodeSchema.generatedForOrder}. Your current order is #${currentOrderNumber}`,
+        });
+      }
+
       discountCodeSchema.isUsed = true;
       discountCodeSchema.usedBy = userId;
 
@@ -115,17 +124,23 @@ router.post('/placeOrder', async (req, res) => {
       );
     }
 
-    // nth logic
+    // nth logic - generate discount code for next order if it qualifies and doesn't exist
     const nextOrderNumber = currentOrderNumber + 1;
     if (nextOrderNumber % nthOrder == 0) {
-      let payload = {
-        code: `DISCOUNT${nextOrderNumber}`,
-        percentage: 10,
-        isUsed: false,
+      const existingDiscountCode = await DiscountCode.findOne({
         generatedForOrder: nextOrderNumber,
-      };
-      const newDiscountCode = new DiscountCode({ ...payload });
-      await newDiscountCode.save();
+      });
+
+      if (!existingDiscountCode) {
+        let payload = {
+          code: `DISCOUNT${nextOrderNumber}`,
+          percentage: 10,
+          isUsed: false,
+          generatedForOrder: nextOrderNumber,
+        };
+        const newDiscountCode = new DiscountCode({ ...payload });
+        await newDiscountCode.save();
+      }
     }
     return res.status(201).json({
       success: true,
