@@ -11,12 +11,10 @@ app.use(cors());
 app.use(express.json());
 
 const productRoutes = require('./src/routes/products');
-const cartRoutes = require('./src/routes/carts');
 const orderRoutes = require('./src/routes/orders');
 const adminRoutes = require('./src/routes/admin');
 
 app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
@@ -25,10 +23,11 @@ app.get('/', (req, res) => {
   res.json({
     message: 'Ecommerce API is running',
     endpoints: {
-      products: '/api/products',
-      cart: '/api/cart',
-      checkout: '/api/checkout',
-      admin: '/api/admin',
+      allProducts: '/api/products',
+      placeOrder: '/api/checkout/placeOrder',
+      fetchAllOrder: '/api/checkout/fetchAllOrder',
+      checkIsCouponValid: '/api/checkout/checkIsCouponValid',
+      generateDiscount: '/api/admin/generate-discount',
     },
   });
 });
@@ -47,11 +46,12 @@ const startServer = async () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       console.log('\n📚 API Documentation:');
-      console.log(`   Health Check: http://localhost:${PORT}/`);
-      console.log(`   Products:     http://localhost:${PORT}/api/products`);
-      console.log(`   Cart:         http://localhost:${PORT}/api/cart/:userId`);
-      console.log(`   Checkout:     http://localhost:${PORT}/api/checkout`);
-      console.log(`   Admin Stats:  http://localhost:${PORT}/api/admin/stats`);
+      console.log(`   Health Check:        http://localhost:${PORT}/`);
+      console.log(`   All Products:        http://localhost:${PORT}/api/products`);
+      console.log(`   Place Order:         http://localhost:${PORT}/api/checkout/placeOrder`);
+      console.log(`   Fetch All Orders:    http://localhost:${PORT}/api/checkout/fetchAllOrder`);
+      console.log(`   Check Coupon Valid:  http://localhost:${PORT}/api/checkout/checkIsCouponValid`);
+      console.log(`   Generate Discount:   http://localhost:${PORT}/api/admin/generate-discount`);
       console.log('\n💡 Tip: Data is stored in memory and resets on restart\n');
     });
   } catch (error) {
