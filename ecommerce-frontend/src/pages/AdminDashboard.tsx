@@ -6,7 +6,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
   ThemeProvider,
   createTheme,
   CssBaseline,
@@ -411,10 +410,22 @@ const AdminDashboard = () => {
             </Card>
           </motion.div>
 
-          {/* Stats Grid - Fixed Grid2 issue */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
+          {/* Stats Grid */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+                lg: 'repeat(5, 1fr)',
+              },
+              gap: 3,
+              mb: 4,
+            }}
+          >
             {stats.map((stat, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
+              <Box key={index}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -477,9 +488,9 @@ const AdminDashboard = () => {
                     </CardContent>
                   </Card>
                 </motion.div>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
 
           {/* Orders and Inventory Tabs */}
           <motion.div
