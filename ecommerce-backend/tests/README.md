@@ -9,7 +9,8 @@ This directory contains unit tests for the E-commerce Backend API endpoints.
 - **MongoDB Memory Server**: In-memory MongoDB instance for testing
 
 ## Test Files
-- `products.test.js`: Tests for Products API endpoints
+- `products.test.js`: Tests for Products API endpoints (9 tests)
+- `orders.test.js`: Tests for Orders/Checkout API endpoints (20 tests)
 
 ## Running Tests
 
@@ -45,9 +46,55 @@ The `products.test.js` file covers:
 
 ### Test Results
 ```
-Test Suites: 1 passed, 1 total
 Tests:       9 passed, 9 total
 Coverage:    100% for products.js
+```
+
+## Orders API Tests
+
+### Test Coverage
+The `orders.test.js` file covers:
+
+#### 1. POST /api/checkout/checkIsCouponValid
+- ✅ Returns valid when next order qualifies for discount (5th, 10th, 15th...)
+- ✅ Returns invalid when next order does not qualify for discount
+- ✅ Returns valid when no orders exist (first order qualifies)
+- ✅ Handles database errors gracefully
+
+#### 2. POST /api/checkout/placeOrder
+- ✅ Successfully places an order without discount code
+- ✅ Returns 400 when userId is missing
+- ✅ Returns 404 when product does not exist
+- ✅ Returns 400 when insufficient stock
+- ✅ Applies valid discount code successfully
+- ✅ Returns 400 when discount code is invalid
+- ✅ Returns 400 when discount code has already been used
+- ✅ Returns 400 when discount code is for different order number
+- ✅ Auto-generates discount code for next qualifying order
+- ✅ Does not create duplicate discount code if it already exists
+- ✅ Increments order number correctly
+- ✅ Handles database errors gracefully
+
+#### 3. GET /api/checkout/fetchAllOrder
+- ✅ Returns empty array when no orders exist
+- ✅ Returns all orders sorted by creation date (newest first)
+- ✅ Returns orders with all fields
+- ✅ Handles database errors gracefully
+
+### Test Results
+```
+Tests:       20 passed, 20 total
+Coverage:    100% for orders.js
+```
+
+## Overall Test Results
+```
+Test Suites: 2 passed, 2 total
+Tests:       29 passed, 29 total
+Coverage:
+  - products.js: 100%
+  - orders.js: 100%
+  - All Models: 100%
 ```
 
 ## Test Structure
@@ -87,8 +134,8 @@ To add tests for a new API endpoint:
 6. Run `npm test` to verify
 
 ## Future Enhancements
-- Add tests for Orders API
-- Add tests for Admin API
-- Add tests for Discount Code API
+- ✅ ~~Add tests for Orders API~~ (Completed)
+- Add tests for Admin API (`/api/admin/generate-discount`)
 - Add integration tests
 - Add API authentication tests
+- Add performance/load tests
