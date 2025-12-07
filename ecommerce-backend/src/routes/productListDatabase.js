@@ -1,6 +1,7 @@
 const axios = require('axios');
 const Product = require('../models/Product');
 
+// Fetching products from FakeStore API and seeding the database
 const productListDatabase = async () => {
   try {
     const count = await Product.countDocuments();

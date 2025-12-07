@@ -7,6 +7,7 @@ const router = express.Router();
 
 const nthOrder = 5; //5,10,15...
 
+// Check if coupon is valid for current order number
 router.post('/checkIsCouponValid', async (req, res) => {
   try {
     const lastOrder = await Order.findOne().sort({ orderNumber: -1 });
@@ -30,6 +31,7 @@ router.post('/checkIsCouponValid', async (req, res) => {
   }
 });
 
+// Place Order API by the User
 router.post('/placeOrder', async (req, res) => {
   try {
     const { userId, items, totalItems, totalAmount, discountCode } = req.body;
@@ -156,6 +158,7 @@ router.post('/placeOrder', async (req, res) => {
   }
 });
 
+// Fetch all orders by Admin
 router.get('/fetchAllOrder', async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });

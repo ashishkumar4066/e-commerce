@@ -4,6 +4,8 @@ const Order = require('../models/Order');
 const router = express.Router();
 
 const nthOrder = 5;
+
+// Generate discount code for every nth order by Admin
 router.post('/generate-discount', async (req, res) => {
   try {
     const { orderNumber } = req.body;
