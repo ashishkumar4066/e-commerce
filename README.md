@@ -79,6 +79,7 @@ Navigate to `/admin/login` to access the admin dashboard.
 - **10% off** total order amount
 - Codes are **order-specific** and **single-use**
 - Auto-generated after completing order #4, #9, #14...
+- **Important**: Discount codes are not automatically displayed - users must manually type them in the checkout
 
 ## API Endpoints
 
